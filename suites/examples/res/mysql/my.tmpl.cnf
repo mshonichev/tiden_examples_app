@@ -1,0 +1,12 @@
+[mysqld]
+server_id={{ id }}
+datadir={{ data_dir }}
+pid_file={{ data_dir }}/mysqld.pid
+socket={{ tmp_dir }}/tiden_{{ unique_id }}_mysql.sock
+log_error={{ log_dir }}/error.log
+port={{ port }}
+log_bin={{ id }}-bin
+relay_log={{ id }}-relay-bin
+mysqlx=off
+default-authentication-plugin=mysql_native_password
+

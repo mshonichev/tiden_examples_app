@@ -1,0 +1,27 @@
+artifacts:
+  ignite:
+    type: ignite
+    glob_path: ./work/apache-ignite-*.zip
+    repack:
+      - move self:/libs/optional/ignite-rest-http self:/libs/
+      - move self:/libs/optional/ignite-zookeeper self:/libs/
+      - move self:/libs/optional/ignite-log4j2 self:/libs/
+      - delete self:/bin/include/visor-common/
+      - delete self:/benchmarks/
+      - delete self:/examples/
+      - delete self:/docs/
+      - delete self:/libs/optional/
+      - delete self:/platforms/
+    remote_unzip: true
+
+  test_tools:
+    glob_path: ./work/ignite-test-tools-1.0.0*.jar
+
+  piclient:
+    type: piclient
+    glob_path:  ./work/piclient-*.jar
+
+  zookeeper:
+    type: zookeeper
+    glob_path: ./work/zookeeper*.gz
+    remote_unzip: true
