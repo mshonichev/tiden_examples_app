@@ -1,0 +1,157 @@
+zookeeper_enabled: false
+
+environment:
+  username: mshonichev
+  private_key_path: /home/mshonichev/.ssh/mshonichev_keys
+  apps_use_global_hosts: True
+  server_hosts:
+#    - '172.25.1.11'
+#    - '172.25.1.12'
+#    - '172.25.1.13'
+#    - '172.25.1.14'
+#    - '172.25.1.15'
+#    - '172.25.1.16'
+#    - '172.25.1.17'
+#    - '172.25.1.18'
+#    - '172.25.1.19'
+#    - '172.25.1.20'
+#    - '172.25.1.21'
+#    - '172.25.1.22'
+#    - '172.25.1.23'
+#    - '172.25.1.24'
+#    - '172.25.1.25'
+#    - '172.25.1.26'
+#    - '172.25.1.27'
+#    - '172.25.1.28'
+#    - '172.25.1.29'
+#    - '172.25.1.30'
+#    - '172.25.1.31'
+#    - '172.25.1.32'
+#    - '172.25.1.33'
+#    - '172.25.1.34'
+#    - '172.25.1.35'
+#    - '172.25.1.36'
+#    - '172.25.1.37'
+#    - '172.25.1.38'
+#    - '172.25.1.39'
+#    - '172.25.1.40'
+#    - '172.25.1.41'
+#    - '172.25.1.42'
+#    - '172.25.1.43'
+#    - '172.25.1.44'
+#    - '172.25.1.45'
+#    - '172.25.1.46'
+#    - '172.25.1.47'
+#    - '172.25.1.48'
+#    - '172.25.1.49'
+#    - '172.25.1.50'
+#    - '172.25.1.51'
+    - '172.25.1.52'
+  servers_per_host: 1
+  server_jvm_options: [
+    '-Xmx8g',
+    '-Xms8g',
+    '-XX:+UnlockCommercialFeatures',
+    '-XX:+UnlockExperimentalVMOptions',
+    '-XX:+UnlockDiagnosticVMOptions',
+    '-XX:+UseG1GC',
+    '-XX:G1HeapRegionSize=16777216',
+    '-XX:InitiatingHeapOccupancyPercent=30',
+    '-XX:G1MaxNewSizePercent=5',
+    '-XX:G1NewSizePercent=1',
+    '-XX:MaxGCPauseMillis=200',
+    '-Djava.net.preferIPv4Stack=true',
+    '-XX:AutoBoxCacheMax=32768',
+    '-Xloggc:${tiden.test_dir}/grid.${tiden.grid_name}.gc.${tiden.node_id}.${tiden.run_counter}.log',
+    '-XX:LogFile=${tiden.test_dir}/grid.${tiden.grid_name}.safepoint.${tiden.node_id}.${tiden.run_counter}.log',
+    '-verbosegc',
+    '-XX:G1LogLevel=finest',
+    '-XX:+PrintSafepointStatistics',
+    '-XX:+PrintGCTimeStamps',
+    '-XX:+PrintGCDetails',
+    '-XX:+PrintGCDateStamps',
+    '-XX:+PrintGCApplicationStoppedTime',
+    '-XX:+PrintGC',
+  ]
+  client_hosts:
+#    - '172.25.1.11'
+#    - '172.25.1.12'
+#    - '172.25.1.13'
+#    - '172.25.1.14'
+#    - '172.25.1.15'
+#    - '172.25.1.16'
+#    - '172.25.1.17'
+#    - '172.25.1.18'
+#    - '172.25.1.19'
+#    - '172.25.1.20'
+#    - '172.25.1.21'
+#    - '172.25.1.22'
+#    - '172.25.1.23'
+#    - '172.25.1.24'
+#    - '172.25.1.25'
+#    - '172.25.1.26'
+#    - '172.25.1.27'
+#    - '172.25.1.28'
+#    - '172.25.1.29'
+#    - '172.25.1.30'
+#    - '172.25.1.31'
+#    - '172.25.1.32'
+#    - '172.25.1.33'
+#    - '172.25.1.34'
+#    - '172.25.1.35'
+#    - '172.25.1.36'
+#    - '172.25.1.37'
+#    - '172.25.1.38'
+#    - '172.25.1.39'
+#    - '172.25.1.40'
+#    - '172.25.1.41'
+#    - '172.25.1.42'
+#    - '172.25.1.43'
+#    - '172.25.1.44'
+#    - '172.25.1.45'
+#    - '172.25.1.46'
+#    - '172.25.1.47'
+#    - '172.25.1.48'
+#    - '172.25.1.49'
+#    - '172.25.1.50'
+#    - '172.25.1.51'
+    - '172.25.1.52'
+  clients_per_host: 1
+  client_jvm_options: ['-Xmx4g', '-Xms4g', '-XX:+UseG1GC', '-Djava.net.preferIPv4Stack=true']
+  home: /storage/ssd/mshonichev/tiden
+  shared_home: /mnt/lab_share01/mshonichev/tiden
+  logger:
+#    console:
+#      log_level: INFO
+    file_handler:
+      log_level: DEBUG
+  env_vars:
+    JAVA_HOME: $JDK_ORA_18
+    PATH: $JDK_ORA_18/bin:$PATH
+#  yardstick:
+#    profiler: jfr
+plugins:
+  TestResultsCollector:
+    unpack_logs: true
+    scope: method
+#    exclude_masks:
+#      - '*.bin'
+#      - '*.dat'
+#      - '*.jar'
+#      - '*.wal'
+#      - '*.zip'
+#      - '*.tar'
+#      - 'work/*'
+#      - '*.hprof'
+#    remote_commands:
+#      - "zip -v --symlinks -r _logs.zip . -i {include_mask} -x {exclude_mask}"
+#    download_masks:
+#      - "_logs.zip"
+#  HostStat:
+#    scope: run
+#    apps: {}
+#artifacts:
+#  jfr_cfg:
+#    type: jfr_cfg
+#    glob_path: ./resources/jfr/gridgain.jfc
+#    remote_unzip: false

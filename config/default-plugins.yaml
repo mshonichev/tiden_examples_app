@@ -1,0 +1,36 @@
+plugins:
+
+  DockerCleaner:
+    force_setup: false
+
+  JavaKiller:
+    force_setup: false
+
+  TestResultsCollector:
+    version: '1.0.0'
+    # method or class or run
+    scope: method
+    remote_commands:
+      - "zip -v --symlinks -r _logs.zip . -i {include_mask} -x {exclude_mask}"
+    download_masks:
+      - "_logs.zip"
+    unpack_logs: false
+
+
+#  SlackPlugin:
+#    print_results: True
+#    direct_message: channel
+#    direct_name: 'tiden_bot_channel'
+#    bot_name: 'TidenSlackBot'
+#    slack_token: ''
+
+#  HostStat:
+#    # method or class or run
+#    scope: method
+#    apps:
+#      dstat: {}
+#      mpstat: {}
+#      iostat: {}
+#      vmstat: {}
+#      top: {}
+
