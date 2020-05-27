@@ -1,9 +1,0 @@
-artifacts:
-  hazelcast:
-    type: hazelcast
-    glob_path: ./work/hazelcast*.zip
-    repack:
-      - delete self:/code-samples
-      - delete self:/demo
-      - delete self:/docs
-    remote_unzip: true

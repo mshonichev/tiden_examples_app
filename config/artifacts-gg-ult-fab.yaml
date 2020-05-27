@@ -1,15 +1,18 @@
 artifacts:
   ignite:
     type: ignite
-    glob_path: ./work/apache-ignite-*.zip
+    glob_path: ./work/gridgain-ultimate-*.zip
     repack:
       - move self:/libs/optional/ignite-rest-http self:/libs/
       - move self:/libs/optional/ignite-zookeeper self:/libs/
+      - move self:/libs/optional/ignite-schedule self:/libs/
       - move self:/libs/optional/ignite-log4j2 self:/libs/
+      - delete self:/bin/include/visorui/
       - delete self:/bin/include/visor-common/
       - delete self:/benchmarks/
       - delete self:/examples/
       - delete self:/docs/
+      - delete self:/integration/
       - delete self:/libs/optional/
       - delete self:/platforms/
     remote_unzip: true

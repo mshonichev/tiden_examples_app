@@ -1,7 +1,8 @@
 #!/usr/bin/env python3
 
 from tiden.case.apptestcase import AppTestCase
-from tiden.util import log_print, render_template
+from tiden.util import log_print, render_template, attr
+from tiden_gridgain.apps import Mysql
 
 from time import sleep
 
@@ -17,7 +18,7 @@ class TestMysql (AppTestCase):
         # Generate config file per server
         res_dir = self.tiden.config['rt']['test_resource_dir']
         mod_dir = self.tiden.config['rt']['remote']['test_module_dir']
-        app = self.get_app_by_type('mysql')[0]
+        app: Mysql = self.get_app_by_type('mysql')[0]
         port_start = 30000
         for server_id in app.nodes.keys():
             # Path to remote config file
@@ -54,6 +55,7 @@ class TestMysql (AppTestCase):
         # Initialize clean database
         app.init_db()
 
+    @attr('mysql')
     def test_mysql_replication(self):
         """ Start MySQL replication 1 master and N slaves.
         Load data in master database and verify that the data replicated on the slaves

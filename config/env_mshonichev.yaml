@@ -18,7 +18,7 @@ environment:
 #    - '172.25.1.21'
 #    - '172.25.1.22'
 #    - '172.25.1.23'
-#    - '172.25.1.24'
+    - '172.25.1.24'
 #    - '172.25.1.25'
 #    - '172.25.1.26'
 #    - '172.25.1.27'
@@ -46,7 +46,7 @@ environment:
 #    - '172.25.1.49'
 #    - '172.25.1.50'
 #    - '172.25.1.51'
-    - '172.25.1.52'
+#    - '172.25.1.52'
   servers_per_host: 1
   server_jvm_options: [
     '-Xmx8g',
@@ -90,7 +90,7 @@ environment:
 #    - '172.25.1.24'
 #    - '172.25.1.25'
 #    - '172.25.1.26'
-#    - '172.25.1.27'
+    - '172.25.1.27'
 #    - '172.25.1.28'
 #    - '172.25.1.29'
 #    - '172.25.1.30'
@@ -115,7 +115,7 @@ environment:
 #    - '172.25.1.49'
 #    - '172.25.1.50'
 #    - '172.25.1.51'
-    - '172.25.1.52'
+#    - '172.25.1.52'
   clients_per_host: 1
   client_jvm_options: ['-Xmx4g', '-Xms4g', '-XX:+UseG1GC', '-Djava.net.preferIPv4Stack=true']
   home: /storage/ssd/mshonichev/tiden
@@ -130,10 +130,10 @@ environment:
     PATH: $JDK_ORA_18/bin:$PATH
 #  yardstick:
 #    profiler: jfr
-plugins:
-  TestResultsCollector:
-    unpack_logs: true
-    scope: method
+#plugins:
+#  TestResultsCollector:
+#    unpack_logs: true
+#    scope: method
 #    exclude_masks:
 #      - '*.bin'
 #      - '*.dat'
