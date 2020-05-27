@@ -11,6 +11,7 @@ Install `tiden` and `tiden_gridgain` packages:
 ```
 
 Alternatively, you can install those packages from source:
+```bash
     git clone git@github.com:mshonichev/tiden_pkg.git
     cd tiden_pkg
     bash ./build.sh
