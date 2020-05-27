@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 
-from apps.hazelcast import Hazelcast
+from tiden_gridgain.apps import Hazelcast
 from tiden.case.apptestcase import AppTestCase
-from tiden.util import render_template
+from tiden.util import render_template, attr
 
 from shutil import move
 from time import sleep
@@ -42,6 +42,7 @@ class TestHazelcast (AppTestCase):
         )
         super().setup()
 
+    @attr('hazelcast')
     def test_start_hz_cluster(self):
         """
         Start and stop Hazelcast cluster

@@ -3,8 +3,8 @@
 run_tests.py \
     --ts=examples \
     --tc=config/env_mshonichev.yaml \
-    --tc=config/plugins-example.yaml \
-    --tc=config/artifacts-mysql.yaml \
+    --tc=config/artifacts-gg-ult-fab.yaml \
+    --tc=config/artifacts-apps.yaml \
     --attr=mysql \
     --clean=tests
 
