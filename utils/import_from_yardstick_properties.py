@@ -14,22 +14,21 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-
 import argparse
 import sys
 import datetime
 from pathlib import Path, PurePath
 import yaml
 
-
 # Command line parser
+
 def create_parser():
     p = argparse.ArgumentParser()
     p.add_argument('-p', required=True, help="Yardstick properties file")
     return p
 
-
 # Dump cases to yaml file
+
 def dump_data_to_yaml(some_dict, output_file):
     if Path(output_file).exists():
         timestamp = datetime.datetime.now().strftime("%y%m%d-%H%m%S")
@@ -170,7 +169,6 @@ def remove_spec_characters(line, signs=[]):
     for s in signs:
         line = line.replace(s, '')
     return line
-
 
 if __name__ == '__main__':
     # Create parser
