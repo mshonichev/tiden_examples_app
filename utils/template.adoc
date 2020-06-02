@@ -1,0 +1,66 @@
+=== Test plan summary
+https://ggsystems.atlassian.net/browse/GG-XXXXX[GG-XXXXX]
+
+An arbitary description of testing intention
+with some clues to test cases root origins
+
+Another paragraph
+
+.See also
+https://whatever.com[useful]
+
+.Documentation changes
+. https://ggsystems.atlassian.net/browse/GG-DOCNN[GG-DOCNN] Document ... feature
+
+=== Functional tests
+
+==== Test 1. Check ...
+.Test reference(s)
+        TODO: implement test
+
+.Test data
+|===
+|*T1*|*T2*|*T3*|*I*
+|a|b|c|d
+|a1|b1|c1|d1
+|===
+
+.Scenario
+. Start grid
+. Execute `smth`
+. Ensure that smth
+
+.Example
+[source,java]
+----
+    public class A {
+        @QuerySqlField
+        private final List<B> b;
+    }
+
+    public class B {
+        private final byte data[100];
+    }
+----
+
+==== Test 2. Check ...
+.Test reference(s)
+        org.apache.ignite.internal.processors.query.SmthTest.testSmth
+        org.apache.ignite.internal.processors.query.SmthTest.testSmth2
+
+.NB
+    whatever text
+    is here should be in panel
+
+Arbitrary paragraph
+of text
+
+    Example of noformat section
+
+.Scenario
+. Start grid
+. Execute smth
+. Ensure that
+.. Ensure this
+.. Ensure and this
+
