@@ -43,7 +43,6 @@ def process_monospace(s):
         r = r + c
     return r
 
-
 RE_LINK = re.compile(r'((http|ftp)s?://[^ ]+)')
 RE_LINK_WITH_NAME = re.compile(r'(?:((?:http|ftp)s?://[^\[ ]*)\[([^\]]*)\])')
 
@@ -70,7 +69,6 @@ def process_links(r):
             start = len(r0) + 1
         res = RE_LINK.search(r, start)
     return r
-
 
 with open(argv[1], 'r') as f:
     p0 = 0    # doc header state
@@ -221,5 +219,4 @@ with open(argv[1], 'r') as f:
 
     for r in o:
         print(r)
-
 

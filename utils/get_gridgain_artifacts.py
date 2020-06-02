@@ -14,7 +14,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-
 from os import rename
 from ftplib import FTP
 from urllib.parse import urlparse
@@ -198,8 +197,8 @@ def parse_args():
 
     return parser.parse_args()
 
-
 # Main
+
 def main():
     args = parse_args()
     search_str = args.search
@@ -230,7 +229,6 @@ def main():
         new_dst_file = f'{dst_prefix}-{dst_file}'
         print(f"Renaming {dst_file} to {new_dst_file}")
         rename(dst_file, new_dst_file)
-
 
 if __name__ == '__main__':
     main()

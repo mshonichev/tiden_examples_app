@@ -14,7 +14,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-
 import sys
 import requests
 from requests.auth import HTTPBasicAuth
@@ -32,6 +31,7 @@ user_ids = {
     'isuntsov@gridgain.com': 6,
     'iartukhov@gridgain.com': 83
 }
+
 
 def print_host_info(servers):
     for srv in servers:
@@ -68,9 +68,11 @@ def lab_lock(servers, user_id):
     return
 
 # TODO: get user id via eco-system's API
+
 def get_eco_user_id(email):
     # 3 -- integration user ID
     return user_ids.get(email, 3)
+
 
 def write_hosts_file(servers, clients):
     f_name = "test_hosts.properties"
@@ -185,7 +187,6 @@ def lab_get_idle(preferred_users=[], relock_other_users=False):
         s_prio_sorted += s_unlocked
 
     return s_prio_sorted, s_other
-
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()

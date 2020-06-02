@@ -1,0 +1,36 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="Prepare Working Directory" type="ShConfigurationType">
+    <option name="INDEPENDENT_SCRIPT_PATH" value="true" />
+    <option name="SCRIPT_PATH" value="$PROJECT_DIR$/utils/prepare_work_dir.sh" />
+    <option name="SCRIPT_OPTIONS" value="--work-dir=work --var-dir=var --config=config/qa-ftp.yaml --fetch-deps" />
+    <option name="INDEPENDENT_SCRIPT_WORKING_DIRECTORY" value="true" />
+    <option name="SCRIPT_WORKING_DIRECTORY" value="$PROJECT_DIR$" />
+    <option name="INDEPENDENT_INTERPRETER_PATH" value="true" />
+    <option name="INTERPRETER_PATH" value="/bin/bash" />
+    <option name="INTERPRETER_OPTIONS" value="" />
+    <method v="2" />
+  </configuration>
+  <configuration default="false" name="Prepare Working Directory" type="BashConfigurationType" factoryName="Bash">
+    <option name="INTERPRETER_OPTIONS" value="" />
+    <option name="INTERPRETER_PATH" value="/bin/bash" />
+    <option name="PROJECT_INTERPRETER" value="false" />
+    <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
+    <option name="PARENT_ENVS" value="true" />
+    <option name="SCRIPT_NAME" value="utils/prepare_work_dir.sh" />
+    <option name="PARAMETERS" value="--work-dir=work --var-dir=var --config=config/qa-ftp.yaml --fetch-deps" />
+    <module name="" />
+    <envs>
+      <env name="IGNITE_VERSION" value="8.7.16" />
+      <env name="GRIDGAIN_VERSION" value="8.7.16" />
+      <env name="WITH_HAZELCAST" value="no" />
+      <env name="WITH_MYSQL" value="no" />
+      <env name="WITH_ZOOKEEPER" value="yes" />
+      <env name="WITH_FLAMEGRAPH" value="no" />
+      <env name="WITH_JFR" value="no" />
+      <env name="WITH_TENSORFLOW" value="no" />
+      <env name="PREV_IGNITE_VERSION" value="8.7.12" />
+      <env name="PREV_GRIDGAIN_VERSION" value="8.7.12" />
+    </envs>
+    <method v="2" />
+  </configuration>
+</component>
