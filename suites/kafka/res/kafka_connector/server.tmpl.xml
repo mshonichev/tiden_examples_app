@@ -1,0 +1,149 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:util="http://www.springframework.org/schema/util"
+       xsi:schemaLocation="
+        http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans.xsd
+        http://www.springframework.org/schema/util
+        http://www.springframework.org/schema/util/spring-util.xsd">
+
+    <import resource="caches.xml"/>
+
+    <bean id="placeholderConfig" class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer"/>
+
+    <bean id="ignite.cfg" class="org.apache.ignite.configuration.IgniteConfiguration">
+        <property name="igniteInstanceName" value="source" />
+
+        <property name="dataStorageConfiguration">
+            <bean class="org.apache.ignite.configuration.DataStorageConfiguration">
+                <property name="SystemRegionInitialSize" value="#{50L * 1024 * 1024}"/>
+                <property name="SystemRegionMaxSize" value="#{300L * 1024 * 1024}"/>
+                <property name="checkpointFrequency" value="1000"/>
+                <property name="defaultDataRegionConfiguration">
+                    <bean class="org.apache.ignite.configuration.DataRegionConfiguration">
+                        <property name="initialSize" value="#{150L * 1024 * 1024}"/>
+                        <property name="maxSize" value="#{500L * 1024 * 1024}"/>
+                        <property name="PersistenceEnabled" value="false"/>
+                    </bean>
+                </property>
+                {% if kafka_data_region %}
+                <property name="dataRegionConfigurations">
+                    <list>
+                        <bean class="org.apache.ignite.configuration.DataRegionConfiguration">
+                            <property name="name" value="kafka-connect"/>
+                            <property name="initialSize" value="#{100L * 1024 * 1024}"/>
+                            <property name="maxSize" value="#{200L * 1024 * 1024}"/>
+<!--                            {% if persistence_enabled %}-->
+<!--                            <property name="PersistenceEnabled" value="true"/>-->
+<!--                            {% else %}-->
+<!--                            <property name="PersistenceEnabled" value="false"/>-->
+<!--                            {% endif %}-->
+                        </bean>
+                    </list>
+                </property>
+                {% endif %}
+            </bean>
+        </property>
+
+<!--        {% if kafka_data_region %}-->
+<!--        <property name="dataStorageConfiguration">-->
+<!--            <bean class="org.apache.ignite.configuration.DataStorageConfiguration">-->
+<!--        <property name="dataRegionConfigurations">-->
+<!--                    <list>-->
+<!--                        <bean class="org.apache.ignite.configuration.DataRegionConfiguration">-->
+<!--                            <property name="name" value="kafka-connect"/>-->
+<!--                            <property name="initialSize" value="#{100L * 1024 * 1024}"/>-->
+<!--                            <property name="maxSize" value="#{200L * 1024 * 1024}"/>-->
+<!--&lt;!&ndash;                            {% if persistence_enabled %}&ndash;&gt;-->
+<!--&lt;!&ndash;                            <property name="PersistenceEnabled" value="true"/>&ndash;&gt;-->
+<!--&lt;!&ndash;                            {% else %}&ndash;&gt;-->
+<!--&lt;!&ndash;                            <property name="PersistenceEnabled" value="false"/>&ndash;&gt;-->
+<!--&lt;!&ndash;                            {% endif %}&ndash;&gt;-->
+<!--                        </bean>-->
+<!--                    </list>-->
+<!--                </property>-->
+<!--            </bean>-->
+<!--            </property>-->
+<!--        {% endif %}-->
+<!--		<property name="clientConnectorConfiguration">-->
+<!--            <bean class="org.apache.ignite.configuration.ClientConnectorConfiguration">-->
+<!--                <property name="port" value="10901"/>-->
+<!--            </bean>-->
+<!--        </property>-->
+
+<!--	<property name="addressResolver">-->
+<!--       	    <bean class="org.apache.ignite.configuration.BasicAddressResolver">-->
+<!--                <constructor-arg>-->
+<!--                    <map>-->
+<!--                        <entry key="{{CONTAINER_ADDRESS}}" value="{{HOST_ADDRESS}}"/>-->
+<!--                    </map>-->
+<!--                </constructor-arg>-->
+<!--            </bean>-->
+<!--        </property>-->
+
+        <property name="clientMode" value="false"/>
+
+        <property name="activeOnStart" value="false"/>
+        <property name="localHost" value="${NODE_IP}"/>
+        <property name="consistentId" value="${CONSISTENT_ID}"/>
+
+        <property name="cacheConfiguration" ref="caches"/>
+
+        <property name="discoverySpi">
+            <bean class="org.apache.ignite.spi.discovery.tcp.TcpDiscoverySpi">
+                <property name="ackTimeout" value="60000"/>
+                <property name="maxAckTimeout" value="300000"/>
+                <property name="reconnectCount" value="2"/>
+                <property name="socketTimeout" value="30000"/>
+		        <property name="localPort" value="{{ discovery_port_prefix }}0"/>
+                <property name="ipFinder">
+                    <bean class="org.apache.ignite.spi.discovery.tcp.ipfinder.vm.TcpDiscoveryVmIpFinder">
+                        <property name="addresses">
+                            <list>
+                                {% for address in addresses %}
+                                <value>{{ address }}:{{ discovery_port_prefix }}0..{{ discovery_port_prefix }}9</value>
+                                {% endfor %}
+                            </list>
+                        </property>
+                    </bean>
+                </property>
+            </bean>
+        </property>
+
+	<property name="communicationSpi">
+        <bean class="org.apache.ignite.spi.communication.tcp.TcpCommunicationSpi">
+            <property name="sharedMemoryPort" value="-1"/>
+            <property name="localPort" value="{{ communication_port_prefix }}0"/>
+            <property name="localPortRange" value="10"/>
+        </bean>
+    </property>
+
+<!--	<property name="cacheConfiguration">-->
+<!--            <list>-->
+<!--                <bean class="org.apache.ignite.configuration.CacheConfiguration">-->
+<!--                    <property name="name" value="person"/>-->
+<!--                    <property name="cacheMode" value="PARTITIONED"/>-->
+<!--                    <property name="atomicityMode" value="ATOMIC"/>-->
+
+<!--                    &lt;!&ndash; Configure query entities &ndash;&gt;-->
+<!--                    <property name="queryEntities">-->
+<!--                        <list>-->
+<!--                            <bean class="org.apache.ignite.cache.QueryEntity">-->
+<!--                                <property name="keyType" value="com.gg.model.PersonKey"/>-->
+<!--                                <property name="valueType" value="com.gg.model.Person"/>-->
+
+<!--                                <property name="fields">-->
+<!--                                    <map>-->
+<!--                                        <entry key="id" value="java.lang.Integer"/>-->
+<!--                                        <entry key="name" value="java.lang.String"/>-->
+<!--                                    </map>-->
+<!--                                </property>-->
+<!--                            </bean>-->
+<!--                        </list>-->
+<!--                    </property>-->
+<!--                </bean>-->
+<!--            </list>-->
+<!--        </property>-->
+    </bean>
+</beans>
