@@ -1,0 +1,37 @@
+Long running transactions:
+#- {name: test_pmi_lrt_1_utility_output_format, test_case_id: 62957}
+#- {name: test_pmi_lrt_2_utility_filter, test_case_id: 62958}
+#- {name: test_pmi_lrt_3_utility_filter_label, test_case_id: 62959}
+#- {name: test_pmi_lrt_4_transactions_list_killing_single_transaction, test_case_id: 62960}
+#- {name: test_pmi_lrt_5_all_nodes_transactions, test_case_id: 62961}
+#- {name: test_pmi_lrt_6_wrong_transaction_xid, test_case_id: 62962}
+#- {name: test_pmi_lrt_7_jmx, test_case_id: 62963}
+#- {name: test_pmi_lrt_8_stop_one_transaction_from_list, test_case_id: 62964}
+#- {name: test_pmi_lrt_9_stop_few_transaction_from_list, test_case_id: 62965}
+#- {name: test_pmi_lrt_10_stop_few_transactions_using_filter, test_case_id: 62984}
+#- {name: test_pmi_lrt_11_not_stop_few_transactions_using_wrong_filter, test_case_id: 80011}
+#- {name: test_pmi_lrt_12_incorrect_filter, test_case_id: 80012}
+
+PME:
+#- {name: test_pmi_pme_1x_stop_transaction_while_snapshot, test_case_id: 62966}
+#- {name: test_pmi_pme_2_stop_transaction_while_snapshot_dynamic_timeout_before, test_case_id: 62967}
+
+suites.sow.test_lrt:
+- {name: test_pmi_pme_1_stop_transaction_while_snapshot}
+- {name: test_lrt_utility_output_format_additional_node}
+- {name: test_lrt_utility_output_format_additional_node_loading}
+- {name: test_pmi_lrt_10_stop_few_transactions_using_filter_loading}
+- {name: test_pmi_lrt_1_utility_output_format_loading}
+- {name: test_pmi_lrt_2_utility_filter_loading}
+- {name: test_pmi_lrt_3_utility_filter_label_loading}
+- {name: test_pmi_lrt_4_transactions_list_killing_single_transaction_loading}
+- {name: test_pmi_lrt_5_all_nodes_transactions_loading}
+- {name: test_pmi_lrt_6_wrong_transaction_xid_loading}
+- {name: test_pmi_lrt_7_jmx_loading}
+- {name: test_pmi_lrt_8_stop_one_transaction_from_list_loading}
+- {name: test_pmi_lrt_9_stop_few_transaction_from_list_loading}
+- {name: test_pmi_lrt_api}
+- {name: test_pmi_lrt_jmx_kill_transactions}
+- {name: test_pmi_pme_1_stop_transaction_while_snapshot_loading11}
+- {name: test_pmi_pme_2_stop_transaction_while_snapshot_dynamic_timeout_after}
+- {name: test_pmi_pme_2_stop_transaction_while_snapshot_dynamic_timeout_loading_after}

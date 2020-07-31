@@ -27,9 +27,14 @@ from yaml import load, dump, FullLoader
 from ftplib import FTP
 import zipfile
 
+from tiden import log_print
+
 import sys
 sys.path.append(
     path.abspath(path.join(path.dirname(__file__), path.pardir)))
+
+
+__version__ = '0.0.2'
 
 
 class EcBenchReport:
@@ -257,19 +262,27 @@ class EcBenchReport:
         with open(self.testrail_report_file, 'w') as fw:
             dump(self.testrail_report, fw)
 
-# Main
-if __name__ == '__main__':
-    print('Eco-System Benchmark report ver 0.0.2')
+
+
+def main():
+    """
+    Eco-System Benchmark report
+    """
+    log_print(f"{main.__doc__} ver. {__version__}")
     python_path = str("%s|%s/suites" % (getcwd(), getcwd())).replace('\\', '/')
     python_path = python_path.replace('|', ';') if platform == 'win32' else python_path.replace('|', ';')
     environ['PYTHONPATH'] = python_path
-    print("Python version %s" % python_version())
+    log_print("Python version %s" % python_version())
     ecb_report = EcBenchReport()
     if len(ecb_report.report) == 0:
-        print('Report file(s) not found')
+        log_print('ERROR: Report file(s) not found', color='red')
         exit(1)
     ecb_report.send()
-    print("Compressing artifacts to %s" % ecb_report.artifact_filename)
+    log_print("Compressing artifacts to %s" % ecb_report.artifact_filename)
     ecb_report.zip()
-    print("Uploading %s to QA FTP" % ecb_report.artifact_filename)
+    log_print("Uploading %s to QA FTP" % ecb_report.artifact_filename)
     ecb_report.upload_to_ftp()
+
+
+if __name__ == '__main__':
+    main()

@@ -1,0 +1,7 @@
+GridGain Snapshots utility \[ver\. [0-9a-z\.\-#:]+\]
+2018 Copyright\(C\) GridGain Systems
+User: [a-z]+
+--------------------------------------------------------------------------------
+Command \[LIST -src=\/err\/no\/such\/folder -host=[0-9\.]+ -port=[0-9]+\] started at \[[0-9]{4}-[0-9]{2}-[0-9]{2} [0-9]{2}:[0-9]{2}:[0-9]{2}\]...
+Error code: 2000. \/err\/no\/such\/folder.
+Command \[LIST\] failed with error: 2000 - command failed.

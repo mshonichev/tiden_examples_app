@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!--
+  Licensed to the Apache Software Foundation (ASF) under one or more
+  contributor license agreements.  See the NOTICE file distributed with
+  this work for additional information regarding copyright ownership.
+  The ASF licenses this file to You under the Apache License, Version 2.0
+  (the "License"); you may not use this file except in compliance with
+  the License.  You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="
+        http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+    <bean id="cache_dr_sender_cfg" class="org.gridgain.grid.configuration.GridGainCacheConfiguration">
+        <property name="drSenderConfiguration">
+            <bean class="org.gridgain.grid.cache.dr.CacheDrSenderConfiguration">
+                <property name="senderGroup" value="group1"/>
+                <!--<property name="batchSendFrequency" value="100"/>-->
+            </bean>
+        </property>
+        <property name="drReceiverEnabled" value="true"/>
+        <!--{% if custom_conflict_resolver %}-->
+        <!--<property name="conflictResolver">-->
+            <!--<bean class="org.apache.ignite.piclient.impls.ChronologicalConflictResolver"/>-->
+        <!--</property>-->
+        <!--{% endif %}-->
+    </bean>
+    <bean id="cache_2_dr_sender_cfg" class="org.gridgain.grid.configuration.GridGainCacheConfiguration">
+        <property name="drSenderConfiguration">
+            <bean class="org.gridgain.grid.cache.dr.CacheDrSenderConfiguration">
+                <property name="senderGroup" value="group2"/>
+                <!--<property name="batchSendFrequency" value="100"/>-->
+            </bean>
+        </property>
+        <property name="drReceiverEnabled" value="true"/>
+    </bean>
+</beans>
