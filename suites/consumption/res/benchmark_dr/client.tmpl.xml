@@ -1,0 +1,198 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!--
+  Licensed to the Apache Software Foundation (ASF) under one or more
+  contributor license agreements.  See the NOTICE file distributed with
+  this work for additional information regarding copyright ownership.
+  The ASF licenses this file to You under the Apache License, Version 2.0
+  (the "License"); you may not use this file except in compliance with
+  the License.  You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+
+<!--
+    Ignite Spring configuration file to startup Ignite cache.
+
+    This file demonstrates how to configure cache using Spring. Provided cache
+    will be created on node startup.
+
+    Use this configuration file when running HTTP REST examples (see 'examples/rest' folder).
+
+    When starting a standalone node, you need to execute the following command:
+    {IGNITE_HOME}/bin/ignite.{bat|sh} examples/config/example-cache.xml
+
+    When starting Ignite from Java IDE, pass path to this file to Ignition:
+    Ignition.start("examples/config/example-cache.xml");
+-->
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:util="http://www.springframework.org/schema/util"
+       xsi:schemaLocation="
+        http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans.xsd
+        http://www.springframework.org/schema/util
+        http://www.springframework.org/schema/util/spring-util.xsd">
+
+<!--    {% if caches %}-->
+<!--    <import resource="{{ caches }}"/>-->
+<!--    {% endif %}-->
+    <import resource="gridgain-plugin-cache-cfg.xml"/>
+
+    <bean id="placeholderConfig" class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer"/>
+
+    <bean id="ignite.cfg" class="org.apache.ignite.configuration.IgniteConfiguration">
+<!--        {% if events_enabled %}-->
+<!--        <property name="includeEventTypes">-->
+<!--            <list>-->
+<!--                &lt;!&ndash;Cache events&ndash;&gt;-->
+<!--                <util:constant static-field="org.gridgain.grid.events.EventType.EVT_DR_REMOTE_DC_NODE_CONNECTED"/>-->
+<!--                <util:constant static-field="org.gridgain.grid.events.EventType.EVT_DR_REMOTE_DC_NODE_DISCONNECTED"/>-->
+<!--                <util:constant static-field="org.gridgain.grid.events.EventType.EVT_DR_CACHE_REPLICATION_STOPPED"/>-->
+<!--                <util:constant static-field="org.gridgain.grid.events.EventType.EVT_DR_CACHE_REPLICATION_STARTED"/>-->
+<!--                <util:constant static-field="org.gridgain.grid.events.EventType.EVT_DR_CACHE_FST_STARTED"/>-->
+<!--                <util:constant static-field="org.gridgain.grid.events.EventType.EVT_DR_CACHE_FST_FAILED"/>-->
+<!--                <util:constant static-field="org.gridgain.grid.events.EventType.EVT_DR_STORE_CORRUPTED"/>-->
+<!--                <util:constant static-field="org.gridgain.grid.events.EventType.EVT_DR_STORE_OVERFLOW"/>-->
+<!--            </list>-->
+<!--        </property>-->
+<!--        {% endif %}-->
+        <!--<property name="peerClassLoadingEnabled" value="true"/>-->
+        <property name="clientMode" value="true"/>
+
+        <property name="activeOnStart" value="false"/>
+
+        <property name="consistentId" value="${CONSISTENT_ID}"/>
+        <property name="localHost" value="${NODE_IP}"/>
+
+        <property name="communicationSpi">
+            <bean class="org.apache.ignite.spi.communication.tcp.TcpCommunicationSpi">
+                <property name="sharedMemoryPort" value="-1"/>
+            </bean>
+        </property>
+
+        {% if ssl_enabled %}
+        <property name="clientConnectorConfiguration">
+            <bean class="org.apache.ignite.configuration.ClientConnectorConfiguration">
+                <property name="sslEnabled" value="true"/>
+                <property name="sslClientAuth" value="true"/>
+                <property name="sslContextFactory">
+                    <bean class="org.apache.ignite.ssl.SslContextFactory">
+                        <property name="keyStoreFilePath" value="{{ ssl_config_path }}/server.jks"/>
+                        <property name="keyStorePassword" value="123456"/>
+                        <property name="trustStoreFilePath" value="{{ ssl_config_path }}/trust.jks"/>
+                        <property name="trustStorePassword" value="123456"/>
+                    </bean>
+                </property>
+            </bean>
+        </property>
+
+        <property name="sslContextFactory">
+            <bean class="org.apache.ignite.ssl.SslContextFactory">
+                <property name="keyStoreFilePath" value="{{ ssl_config_path }}/server.jks"/>
+                <property name="keyStorePassword" value="123456"/>
+                <property name="trustStoreFilePath" value="{{ ssl_config_path }}/trust.jks"/>
+                <property name="trustStorePassword" value="123456"/>
+            </bean>
+        </property>
+
+        <!-- Enable SSL for external connect  -->
+        <property name="connectorConfiguration">
+            <bean class="org.apache.ignite.configuration.ConnectorConfiguration">
+                <property name="sslEnabled" value="true"/>
+                <property name="sslClientAuth" value="true"/>
+            </bean>
+        </property>
+        {% endif %}
+
+        {% if zookeeper_enabled %}
+        <property name="discoverySpi">
+            <bean class="org.apache.ignite.spi.discovery.zk.ZookeeperDiscoverySpi">
+                <property name="zkConnectionString" value="${ZK_CONNECTION}"/>
+                <property name="sessionTimeout" value="10000"/>
+            </bean>
+        </property>
+        {% else %}
+        <property name="discoverySpi">
+            <bean class="org.apache.ignite.spi.discovery.tcp.TcpDiscoverySpi">
+                <property name="ackTimeout" value="60000"/>
+                <property name="maxAckTimeout" value="300000"/>
+                <property name="reconnectCount" value="2"/>
+                <property name="socketTimeout" value="30000"/>
+                <property name="ipFinder">
+                    <bean class="org.apache.ignite.spi.discovery.tcp.ipfinder.vm.TcpDiscoveryVmIpFinder">
+                        <property name="addresses">
+                            <list>
+                                {% for address in addresses %}
+                                <value>{{ address }}:{{ discovery_port_prefix }}0..{{ discovery_port_prefix }}9</value>
+                                {% endfor %}
+                            </list>
+                        </property>
+                    </bean>
+                </property>
+            </bean>
+        </property>
+        {% endif %}
+        <property name="pluginConfigurations">
+            <list>
+                <bean class="org.gridgain.grid.configuration.GridGainConfiguration">
+                    <property name="rollingUpdatesEnabled" value="true"/>
+                    {% if node %}
+                    <property name="dataCenterId" value="{{ node.cluster.id }}"/>
+                    {% endif %}
+
+                    {% if node and node.is_sender() > 0  %}
+                    <property name="drSenderConfiguration">
+                        <bean class="org.gridgain.grid.configuration.DrSenderConfiguration">
+                            <property name="senderGroups">
+                                <list>
+                                    {% for name in group_names %}
+                                    <value>{{ name }}</value>
+                                    {% endfor %}
+                                </list>
+                            </property>
+
+                            <property name="connectionConfiguration">
+                                <list>
+                                {% for receiver_node in node.receiver_nodes %}
+                                <bean class="org.gridgain.grid.dr.DrSenderConnectionConfiguration">
+                                    <property name="dataCenterId" value="{{ receiver_node.cluster.id }}"/>
+                                    <property name="receiverAddresses">
+                                        <list>
+                                            <value>{{ receiver_node['host'] }}:{{ receiver_node['dr_port'] }}</value>
+                                        </list>
+                                    </property>
+                                    {% if fs_store_path %}
+                                    <property name="store">
+                                        <bean class="org.gridgain.grid.dr.store.fs.DrSenderFsStore">
+                                            <property name="directoryPath" value="{{ fs_store_path_value }}"/>
+                                            <!--<property name="maxFileSize" value="1048576"/>-->
+                                        </bean>
+                                    </property>
+                                    {% endif %}
+                                </bean>
+                                {% endfor %}
+                                </list>
+                            </property>
+                        </bean>
+                    </property>
+                    {% endif %}
+                    {% if node and node.is_receiver()  %}
+                    <property name="drReceiverConfiguration">
+                        <bean class="org.gridgain.grid.configuration.DrReceiverConfiguration">
+                            <property name="localInboundPort" value="{{ node['dr_port'] }}"/>
+                        </bean>
+                    </property>
+                    {% endif %}
+                </bean>
+            </list>
+        </property>
+
+    </bean>
+</beans>

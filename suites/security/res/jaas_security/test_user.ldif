@@ -1,0 +1,21 @@
+version: 1
+
+dn: uid=test_user,dc=openmicroscopy,dc=org
+objectClass: top
+objectClass: inetOrgPerson
+objectClass: person
+objectClass: organizationalPerson
+cn: test
+sn: user
+description:: ewogICAgICAgImRlZmF1bHRBbGxvdyI6ImZhbHNlIiwKICAgICAgIHsKICAgIC
+ AgICJjYWNoZSI6IioiLAogICAgICAgInBlcm1pc3Npb25zIjpbIkNBQ0hFX1BVVCIsICJDQUNIR
+ V9SRUFEIiwgIkNBQ0hFX1JFTU9WRSJdCiAgICAgICAgfSwKICAgICAgIHsKICAgICAgICJzeXN0
+ ZW0iOlsiQURNSU5fVklFVyIsICJBRE1JTl9PUFMiLCAiQURNSU5fUVVFUlkiLCAiQURNSU5fQ0F
+ DSEUiXQogICAgICAgIH0sCiAgICAgICAgewogICAgICAgInRhc2siOiJvcmcuZ3JpZGdhaW4udm
+ lzb3IudGVzdGVyLioiLAogICAgICAgInBlcm1pc3Npb25zIjpbIlRBU0tfRVhFQ1VURSIsICJUQ
+ VNLX0NBTkNFTCJdCiAgICAgICAgfSwKICAgICAgICB7CiAgICAgICAgInRhc2siOiJvcmcuYXBh
+ Y2hlLmlnbml0ZS5pbnRlcm5hbC4qIiwKICAgICAgICAicGVybWlzc2lvbnMiOlsiVEFTS19FWEV
+ DVVRFIiwgIlRBU0tfQ0FOQ0VMIl0KICAgICAgICB9Cn0=
+uid: test_user
+userPassword: {SSHA}zwLxMEzRfpjV/lDnUirGSv4v2JoIWezYiiuf1A==
+

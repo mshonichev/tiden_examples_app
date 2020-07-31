@@ -1,0 +1,209 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!--
+  Licensed to the Apache Software Foundation (ASF) under one or more
+  contributor license agreements.  See the NOTICE file distributed with
+  this work for additional information regarding copyright ownership.
+  The ASF licenses this file to You under the Apache License, Version 2.0
+  (the "License"); you may not use this file except in compliance with
+  the License.  You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+
+<!--
+    Ignite Spring configuration file to startup Ignite cache.
+
+    This file demonstrates how to configure cache using Spring. Provided cache
+    will be created on node startup.
+
+    Use this configuration file when running HTTP REST examples (see 'examples/rest' folder).
+
+    When starting a standalone node, you need to execute the following command:
+    {IGNITE_HOME}/bin/ignite.{bat|sh} examples/config/example-cache.xml
+
+    When starting Ignite from Java IDE, pass path to this file to Ignition:
+    Ignition.start("examples/config/example-cache.xml");
+-->
+<beans xmlns="http://www.springframework.org/schema/beans"
+    xmlns:util="http://www.springframework.org/schema/util"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.springframework.org/schema/beans
+    http://www.springframework.org/schema/beans/spring-beans.xsd
+    http://www.springframework.org/schema/util
+    http://www.springframework.org/schema/util/spring-util.xsd">
+
+    <bean id="placeholderConfig" class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer"/>
+
+    {% if use_auth %}
+    <bean id="server.cred" class="org.apache.ignite.plugin.security.SecurityCredentials">
+         <constructor-arg value="server_login"/>
+         <constructor-arg value="server_password"/>
+    </bean>
+    <bean id="client.cred" class="org.apache.ignite.plugin.security.SecurityCredentials">
+        <constructor-arg value="client_login"/>
+        <constructor-arg value="client_password"/>
+    </bean>
+    {% endif %}
+
+    <import resource="${CACHE_CONFIG}"/>
+    {% if use_memory_configuration %}
+    <import resource="policies.xml"/>
+    {% endif %}
+
+    <bean id="ignite.cfg" class="org.apache.ignite.configuration.IgniteConfiguration">
+
+        <!-- Added in 8.7.7 -->
+        <!-- This event is used by IgnitePutGetWithPageReplacements.
+        The event is triggered once hence there will be no performance impact -->
+        {% if enable_event_page_replacement %}
+        <property name="includeEventTypes">
+            <util:constant static-field="org.apache.ignite.events.EventType.EVT_PAGE_REPLACEMENT_STARTED"/>
+        </property>
+        {% endif %}
+
+        <property name="clientMode" value="false"/>
+
+        <property name="activeOnStart" value="false"/>
+
+        <property name="consistentId" value="${CONSISTENT_ID}"/>
+
+        <property name="cacheConfiguration" ref="caches"/>
+
+        <property name="localHost" value="${NODE_IP}"/>
+
+        {% if ssl_enabled %}
+        <property name="sslContextFactory">
+            <bean class="org.apache.ignite.ssl.SslContextFactory">
+                <property name="keyStoreFilePath" value="${IGNITE_HOME}/../server.jks"/>
+                <property name="keyStorePassword" value="123456"/>
+                <property name="trustManagers">
+                    <bean class="org.apache.ignite.ssl.SslContextFactory" factory-method="getDisabledTrustManager"/>
+                </property>
+            </bean>
+        </property>
+        {% endif %}
+
+        {% if use_auth %}
+        <property name="pluginConfigurations">
+            <list>
+                <bean class="org.gridgain.grid.configuration.GridGainConfiguration">
+                    <property name="authenticator">
+                        <bean class="org.gridgain.grid.security.passcode.PasscodeAuthenticator">
+                            <!-- Set acl provider. -->
+                            <property name="aclProvider">
+                                <bean class="org.gridgain.grid.security.passcode.AuthenticationAclBasicProvider">
+                                    <constructor-arg>
+                                        <map>
+                                            <entry key-ref="server.cred" value="{defaultAllow:true}"/>
+                                            <entry key-ref="client.cred"
+                                                   value="{
+                                                    {cache:'*', permissions: ['CACHE_READ', 'CACHE_PUT', 'CACHE_REMOVE']},
+                                                    {task:'*', permissions: ['TASK_EXECUTE', 'TASK_CANCEL']},
+                                                    {system: [
+                                                        'JOIN_AS_SERVER', 'EVENTS_ENABLE', 'EVENTS_DISABLE',
+                                                        'ADMIN_OPS', 'ADMIN_VIEW', 'ADMIN_QUERY',
+                                                        'ADMIN_CACHE', 'CACHE_CREATE', 'CACHE_DESTROY'
+                                                    ]},
+                                                     defaultAllow:false
+                                                 }"/>
+                                        </map>
+                                    </constructor-arg>
+                                </bean>
+                            </property>
+                        </bean>
+                    </property>
+
+                    <property name="securityCredentialsProvider">
+                        <bean class="org.apache.ignite.plugin.security.SecurityCredentialsBasicProvider">
+                            <constructor-arg ref="server.cred"/>
+                        </bean>
+                    </property>
+                </bean>
+            </list>
+        </property>
+        {% endif %}
+
+
+        <property name="communicationSpi">
+            <bean class="org.apache.ignite.spi.communication.tcp.TcpCommunicationSpi">
+                <property name="sharedMemoryPort" value="-1"/>
+                <!-- Set messageQueueLimit to avoid long GC pauses on atomic operations + PRIMARY_SYNC -->
+                <property name="messageQueueLimit" value="4096"/>
+            </bean>
+        </property>
+
+        <property name="binaryConfiguration">
+            <bean class="org.apache.ignite.configuration.BinaryConfiguration">
+                <property name="compactFooter" value="false"/>
+            </bean>
+        </property>
+
+        {% if use_memory_configuration %}
+        <property name="memoryConfiguration">
+            <bean class="org.apache.ignite.configuration.MemoryConfiguration">
+                <property name="systemCacheInitialSize" value="#{100 * 1024 * 1024}"/>
+                <property name="systemCacheMaxSize" value="#{1024 * 1024 * 1024}"/>
+                <property name="defaultMemoryPolicyName" value="default_mem_plc"/>
+                <property name="memoryPolicies" ref="policies" />
+            </bean>
+        </property>
+
+            {% if persistence_enabled %}
+            <property name="persistentStoreConfiguration">
+                <bean class="org.apache.ignite.configuration.PersistentStoreConfiguration">
+                    <property name="walMode" value="{{ wal_mode }}"/>
+                </bean>
+            </property>
+            {% endif %}
+        {% else %}
+        <property name="dataStorageConfiguration">
+            <bean class="org.apache.ignite.configuration.DataStorageConfiguration">
+                <property name="systemRegionInitialSize" value="#{100 * 1024 * 1024}"/>
+                <property name="systemRegionMaxSize" value="#{1024 * 1024 * 1024}"/>
+                {% if persistence_enabled %}
+                <property name="walMode" value="{{ wal_mode }}"/>
+                {% endif %}
+
+                <property name="defaultDataRegionConfiguration">
+                    <bean class="org.apache.ignite.configuration.DataRegionConfiguration">
+                        <property name="name" value="default_data_region"/>
+                        <property name="initialSize" value="#{50 * 1024 * 1024}"/>
+                        <property name="maxSize" value="#{ {{ data_region_max_size_mb }} * 1024 * 1024}"/>
+                        {% if persistence_enabled %}
+                        <property name="persistenceEnabled" value="true"/>
+                        {% endif %}
+                    </bean>
+                </property>
+            </bean>
+        </property>
+        {% endif %}
+
+        <!-- Explicitly configure TCP discovery SPI to provide list of initial nodes. -->
+        <property name="discoverySpi">
+            <bean class="org.apache.ignite.spi.discovery.tcp.TcpDiscoverySpi">
+                <property name="ackTimeout" value="60000"/>
+                <property name="maxAckTimeout" value="300000"/>
+                <property name="reconnectCount" value="2"/>
+                <property name="socketTimeout" value="30000"/>
+                <property name="ipFinder">
+                    <bean class="org.apache.ignite.spi.discovery.tcp.ipfinder.vm.TcpDiscoveryVmIpFinder">
+                        <property name="addresses">
+                            <list>
+                                {% for address in addresses %}
+                                <value>{{ address }}:47500..47510</value>
+                                {% endfor %}
+                            </list>
+                        </property>
+                    </bean>
+                </property>
+            </bean>
+        </property>
+    </bean>
+</beans>

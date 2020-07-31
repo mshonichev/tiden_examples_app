@@ -1,0 +1,9 @@
+dn: uid=_USER_,dc=openmicroscopy,dc=org
+changetype: add
+objectClass: inetOrgPerson
+objectClass: organizationalPerson
+objectClass: person
+objectClass: top
+uid: _USER_
+sn: _USER_
+cn: _USER_

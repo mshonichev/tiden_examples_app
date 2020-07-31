@@ -1,0 +1,11 @@
+version: '3'
+services:
+  combiner-server:
+    ports:
+      - "9995:9995"
+    environment:
+      - "PORT=9995"
+      - "FILESPATH=/data/storage.json"
+    volumes:
+      - "/Users/prtagent/combiner_queue:/data"
+    image: commontestgg/combiner-serve:0.1

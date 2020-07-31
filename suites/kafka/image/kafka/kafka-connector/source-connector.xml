@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:util="http://www.springframework.org/schema/util"
+       xsi:schemaLocation="
+        http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans.xsd
+        http://www.springframework.org/schema/util
+        http://www.springframework.org/schema/util/spring-util.xsd">
+
+    <bean id="placeholderConfig" class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer"/>
+
+    <bean id="ignite.cfg" class="org.apache.ignite.configuration.IgniteConfiguration">
+        <property name="dataStorageConfiguration">
+            <bean class="org.apache.ignite.configuration.DataStorageConfiguration">
+                <property name="dataRegionConfigurations">
+                    <list>
+                        <bean class="org.apache.ignite.configuration.DataRegionConfiguration">
+                            <property name="name" value="kafka-connect"/>
+                            <property name="initialSize" value="#{100L * 1024 * 1024}"/>
+                            <property name="maxSize" value="#{200L * 1024 * 1024}"/>
+                        </bean>
+                    </list>
+                </property>
+            </bean>
+        </property>
+
+        <property name="igniteInstanceName" value="source" />
+
+        <property name="clientMode" value="true"/>
+
+        <property name="activeOnStart" value="false"/>
+
+        <property name="discoverySpi">
+            <bean class="org.apache.ignite.spi.discovery.tcp.TcpDiscoverySpi">
+                <property name="ackTimeout" value="60000"/>
+                <property name="maxAckTimeout" value="300000"/>
+                <property name="reconnectCount" value="2"/>
+                <property name="socketTimeout" value="30000"/>
+                <property name="ipFinder">
+                    <bean class="org.apache.ignite.spi.discovery.tcp.ipfinder.vm.TcpDiscoveryVmIpFinder">
+                        <property name="addresses">
+                            <list>
+                                <value>{{SOURCE_IP_FINDER_ADDRESSES}}</value>
+                            </list>
+                        </property>
+                    </bean>
+                </property>
+            </bean>
+        </property>
+
+        <property name="communicationSpi">
+            <bean class="org.apache.ignite.spi.communication.tcp.TcpCommunicationSpi">
+                <property name="sharedMemoryPort" value="-1"/>
+            </bean>
+        </property>
+
+<!--        <property name="cacheConfiguration">-->
+<!--            <list>-->
+<!--                <bean class="org.apache.ignite.configuration.CacheConfiguration">-->
+<!--                    <property name="name" value="person"/>-->
+<!--                    <property name="groupName" value="cache_group_1"/>-->
+<!--                    <property name="atomicityMode" value="ATOMIC"/>-->
+<!--                    <property name="backups" value="2"/>-->
+<!--                    <property name="cacheMode" value="PARTITIONED"/>-->
+<!--                    <property name="writeSynchronizationMode" value="FULL_SYNC"/>-->
+<!--                </bean>-->
+<!--            </list>-->
+<!--        </property>-->
+
+    </bean>
+</beans>

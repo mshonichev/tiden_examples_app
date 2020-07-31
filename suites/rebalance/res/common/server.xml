@@ -1,0 +1,185 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!--
+  Licensed to the Apache Software Foundation (ASF) under one or more
+  contributor license agreements.  See the NOTICE file distributed with
+  this work for additional information regarding copyright ownership.
+  The ASF licenses this file to You under the Apache License, Version 2.0
+  (the "License"); you may not use this file except in compliance with
+  the License.  You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+
+<!--
+    Ignite Spring configuration file to startup Ignite cache.
+
+    This file demonstrates how to configure cache using Spring. Provided cache
+    will be created on node startup.
+
+    Use this configuration file when running HTTP REST examples (see 'examples/rest' folder).
+
+    When starting a standalone node, you need to execute the following command:
+    {IGNITE_HOME}/bin/ignite.{bat|sh} examples/config/example-cache.xml
+
+    When starting Ignite from Java IDE, pass path to this file to Ignition:
+    Ignition.start("examples/config/example-cache.xml");
+-->
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="
+        http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+    {% if caches_file %}
+    <import resource="caches_{{caches_file}}.xml"/>
+    {% else %}
+    <import resource="caches.xml"/>
+    {% endif %}
+    <import resource="policies.xml"/>
+    <import resource="query-entity.xml"/>
+
+    <bean id="placeholderConfig" class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer"/>
+
+    <bean id="ignite.cfg" class="org.apache.ignite.configuration.IgniteConfiguration">
+
+        <property name="peerClassLoadingEnabled" value="true"/>
+
+        <property name="rebalanceThreadPoolSize" value="{{rebalance_pool_size}}"/>
+
+        {% if logger_enabled %}
+        <property name="gridLogger">
+            <bean class="org.apache.ignite.logger.log4j2.Log4J2Logger">
+                <constructor-arg type="java.lang.String" value="{{logger_path}}"/>
+            </bean>
+        </property>
+        {% endif %}
+
+        <property name="clientMode" value="false"/>
+        <property name="activeOnStart" value="false"/>
+        <property name="localHost" value="${NODE_IP}"/>
+        <property name="consistentId" value="${CONSISTENT_ID}"/>
+        <property name="cacheConfiguration" ref="caches"/>
+        <property name="communicationSpi">
+            <bean class="org.apache.ignite.spi.communication.tcp.TcpCommunicationSpi">
+                <property name="sharedMemoryPort" value="-1"/>
+            </bean>
+        </property>
+
+        <property name="binaryConfiguration">
+            <bean class="org.apache.ignite.configuration.BinaryConfiguration">
+                <property name="compactFooter" value="false"/>
+            </bean>
+        </property>
+
+        {% if ssl_enabled %}
+        <property name="clientConnectorConfiguration">
+            <bean class="org.apache.ignite.configuration.ClientConnectorConfiguration">
+                <property name="sslEnabled" value="true"/>
+                <property name="sslClientAuth" value="true"/>
+                <property name="sslContextFactory">
+                    <bean class="org.apache.ignite.ssl.SslContextFactory">
+                        <property name="keyStoreFilePath" value="{{ ssl_config_path }}/server.jks"/>
+                        <property name="keyStorePassword" value="123456"/>
+                        <property name="trustStoreFilePath" value="{{ ssl_config_path }}/trust.jks"/>
+                        <property name="trustStorePassword" value="123456"/>
+                    </bean>
+                </property>
+            </bean>
+        </property>
+
+        <property name="sslContextFactory">
+            <bean class="org.apache.ignite.ssl.SslContextFactory">
+                <property name="keyStoreFilePath" value="{{ ssl_config_path }}/server.jks"/>
+                <property name="keyStorePassword" value="123456"/>
+                <property name="trustStoreFilePath" value="{{ ssl_config_path }}/trust.jks"/>
+                <property name="trustStorePassword" value="123456"/>
+            </bean>
+        </property>
+
+        <!-- Enable SSL for external connect  -->
+        <property name="connectorConfiguration">
+            <bean class="org.apache.ignite.configuration.ConnectorConfiguration">
+                <property name="sslEnabled" value="true"/>
+                <property name="sslClientAuth" value="true"/>
+            </bean>
+        </property>
+        {% endif %}
+
+        <property name="dataStorageConfiguration">
+            <bean class="org.apache.ignite.configuration.DataStorageConfiguration">
+                <!-- Enabling Apache Ignite Persistent Store. -->
+                <property name="defaultDataRegionConfiguration">
+                    <bean class="org.apache.ignite.configuration.DataRegionConfiguration">
+                        <property name="persistenceEnabled" value="true"/>
+                    </bean>
+                </property>
+                <!-- Enable compaction. -->
+                <property name="walCompactionEnabled" value="false"/>
+                <property name="walSegments" value="{{num_wal_segments}}"/>
+                {% if wal_segment_size %}
+                <property name="walSegmentSize" value="{{wal_segment_size}}"/>
+                {% endif %}
+                {% if wal_history_size %}
+                <property name="walHistorySize" value="{{wal_history_size}}"/>
+                {% endif %}
+            </bean>
+        </property>
+
+        {% if snapshots_enabled %}
+        <property name="pluginConfigurations">
+            <list>
+                <bean class="org.gridgain.grid.configuration.GridGainConfiguration">
+                    <property name="snapshotConfiguration">
+                        <bean class="org.gridgain.grid.configuration.SnapshotConfiguration">
+                            {% if pitr_enabled %}
+                            <property name="pointInTimeRecoveryEnabled" value="true"/>
+                            <!--property name="snapshotsPath" value="/mnt/lab_share01/test_cancel_command/snapshot/${CONSISTENT_ID}"/-->
+                            {% endif %}
+                        </bean>
+                    </property>
+                </bean>
+            </list>
+        </property>
+        {% endif %}
+
+
+        <!-- Explicitly configure TCP discovery SPI to provide list of initial nodes. -->
+        {% if zookeeper_enabled %}
+        <property name="discoverySpi">
+            <bean class="org.apache.ignite.spi.discovery.zk.ZookeeperDiscoverySpi">
+                <property name="zkConnectionString" value="{{zoo_connection}}"/>
+                <property name="sessionTimeout" value="30000"/>
+            </bean>
+        </property>
+        {% else %}
+        <property name="discoverySpi">
+            <bean class="org.apache.ignite.spi.discovery.tcp.TcpDiscoverySpi">
+                <property name="ackTimeout" value="60000"/>
+                <property name="maxAckTimeout" value="300000"/>
+                <property name="reconnectCount" value="2"/>
+                <property name="socketTimeout" value="30000"/>
+                <property name="ipFinder">
+                    <bean class="org.apache.ignite.spi.discovery.tcp.ipfinder.vm.TcpDiscoveryVmIpFinder">
+                        <property name="addresses">
+                            <list>
+                                {% for address in addresses %}
+                                <value>{{ address }}:47500..47510</value>
+                                {% endfor %}
+                            </list>
+                        </property>
+                    </bean>
+                </property>
+            </bean>
+        </property>
+        {% endif %}
+    </bean>
+
+</beans>
+
